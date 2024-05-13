@@ -2,36 +2,47 @@
 // © Tenstays
 
 //@version=5
-indicator("quantizer", overlay=true)
-//+----------------------------------------------------------------------------------------------------------+
-// --- program settings
-int signal_line_width = 3
-color signal_line_color = #000000
+indicator("grid", overlay=true, max_lines_count=500, max_boxes_count=500)
+
+major_lines = input.bool(title="", defval=true, inline="major")
+major_grid_colour = input.color(title="", defval=color.new(color.white, 30), inline="major")
+starting_point = input.float(title="", defval=15000, inline="major")
+zones = input.bool(title="", defval=false, inline="minor")
+zone_colour = input.color(title="", defval=color.new(color.black, 90), inline="minor")
+
+float grid_steps = switch syminfo.ticker
+    "XAUUSD" => float(1)
+    "NAS100" => float(10)
+    "NAS100USD" => float(10)
+    "EURUSD" => float(0.00010)
 
 
-// --- global variables
-float asset_steps = switch syminfo.ticker
-    "NAS100" => float(20) / 1
-    "NAS100USD" => float(20) / 1
+create_grid(initial_point) =>
+    float increment = (grid_steps * 2)
+    float position = (initial_point - initial_point % (grid_steps * 10))
+    float zone_position = position + grid_steps
+    int max = 500 / 5
+    
 
+    for i=1 to max
+        if major_lines
+            line.new(bar_index, position, bar_index-1, position, extend=extend.both, color=major_grid_colour, width=3)
+        
+        float zone_position_steps = zone_position - grid_steps
+        if not zones
+            zone_position_steps := zone_position
+        box.new(bar_index, zone_position, bar_index-1, zone_position_steps, border_color=zone_colour, border_width=1, extend=extend.both, bgcolor=zone_colour)
+        for a=1 to 4
+            zone_position += increment
+            zone_position_steps := zone_position - grid_steps
+            if not zones
+                zone_position_steps := zone_position
+            box.new(bar_index, zone_position, bar_index-1, zone_position_steps, border_color=zone_colour, border_width=1, extend=extend.both, bgcolor=zone_colour)
+        
+        
+        position += grid_steps * 10
+        zone_position := position + grid_steps
+    
 
-// --- program function definitions
-percentage(size)=>
-    asset_steps / float(size)
-
-
-quantize_signals(signal, direction, size=4, option=2)=>
-    float results = signal
-    float percentage = percentage(size)
-    float percentage_qaurter = percentage(size * option)
-    float min = signal - (signal % percentage)
-    float max = min + percentage
-    if direction == 1
-        results := max
-        if (signal - min) < percentage_qaurter
-            results := min
-    else if direction == -1
-        results := min
-        if (max - signal) < percentage_qaurter
-            results := max
-    results
+if barstate.islast
+    create_grid(starting_point)
