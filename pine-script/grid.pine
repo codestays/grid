@@ -6,7 +6,7 @@ indicator("grid", overlay=true, max_lines_count=500, max_boxes_count=500)
 
 major_lines = input.bool(title="", defval=true, inline="major")
 major_grid_colour = input.color(title="", defval=color.new(#000000, 80), inline="major")
-starting_point = input.float(title="", defval=2100, inline="major")
+starting_point = input.float(title="", defval=2200, inline="major")
 zones = input.bool(title="", defval=false, inline="minor")
 zone_colour = input.color(title="", defval=color.new(color.black, 90), inline="minor")
 
@@ -20,38 +20,19 @@ float grid_steps = switch syminfo.ticker
 create_grid(initial_point) =>
     float increment = (grid_steps * 2)
     float position = (initial_point - initial_point % (grid_steps * 100)) + (grid_steps * 2)
-    // float position = (initial_point - initial_point % (grid_steps * 10))
     float zone_position = position + grid_steps
     int max = 500 / 5
     
-    // for i=1 to max
-    //     if major_lines
-    //         line.new(bar_index, position, bar_index-1, position, extend=extend.both, color=major_grid_colour, width=3)
-        
-    //     float zone_position_steps = zone_position - grid_steps
-    //     if not zones
-    //         zone_position_steps := zone_position
-    //     box.new(bar_index, zone_position, bar_index-1, zone_position_steps, border_color=zone_colour, border_width=1, extend=extend.both, bgcolor=zone_colour)
-    //     for a=1 to 4
-    //         zone_position += increment
-    //         zone_position_steps := zone_position - grid_steps
-    //         if not zones
-    //             zone_position_steps := zone_position
-    //         box.new(bar_index, zone_position, bar_index-1, zone_position_steps, border_color=zone_colour, border_width=1, extend=extend.both, bgcolor=zone_colour)
-        
-        
-    //     position += grid_steps * 10
-    //     zone_position := position + grid_steps
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
     for i=1 to max
         if major_lines
             if int(position % (grid_steps * 10)) == 2
-                box.new(bar_index, position, bar_index-1, position, border_color=major_grid_colour, border_width=1, extend=extend.both, bgcolor=major_grid_colour)
+                box.new(bar_index, position, bar_index-1, position, border_color=major_grid_colour, border_width=3, extend=extend.both, bgcolor=major_grid_colour)
+                if zones
+                    line.new(bar_index, (position + increment), bar_index-1, (position + increment), extend=extend.both, color=major_grid_colour, width=2, style=line.style_dotted)
             else
                 box.new(bar_index, position, bar_index-1, position, border_color=major_grid_colour, border_width=1, extend=extend.both, bgcolor=major_grid_colour)
-        if zones
-            line.new(bar_index, (position + increment), bar_index-1, (position + increment), extend=extend.both, color=major_grid_colour, width=2, style=line.style_dotted)
+                if zones
+                    line.new(bar_index, (position + increment), bar_index-1, (position + increment), extend=extend.both, color=major_grid_colour, width=2, style=line.style_dotted)
 
         position += (grid_steps * 4)
     
