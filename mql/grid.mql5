@@ -14,15 +14,21 @@ int stopIteration = 3000;
 string symbol = Symbol();
 
 
-int OnInit(){
+int OnInit()
+{
+   StringToLower(symbol);
+   if(display){createGrid(startPrice());}
+   else{deleteObjects();}
    return(INIT_SUCCEEDED);
 }
 
-
-void OnDeinit(const int reason){}
-
+void OnDeinit(const int reason)
+{
+   deleteObjects();
+}
 
 void OnTick(){}
+
 
 
 float startPrice(){
