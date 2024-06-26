@@ -3,20 +3,38 @@
 #property link      "luniko.co.za"
 #property version   "1.00"
 
-int OnInit()
-{
 
+
+//+++ user input
+input bool display = true;
+input bool enableZones = false;
+
+//--- global variables
+int stopIteration = 3000;
+string symbol = Symbol();
+
+
+int OnInit(){
    return(INIT_SUCCEEDED);
 }
 
-void OnDeinit(const int reason)
-{
 
-   
+void OnDeinit(const int reason){}
+
+
+void OnTick(){}
+
+
+float startPrice(){
+   if(symbol == "xauusd" || symbol == "gold"){return 1000.00;}
+   else if(symbol == "us30cash" || symbol == "us30"){return 30000.00;}
+   return 0.0;
 }
 
-void OnTick()
-{
 
-   
+float gridSteps(){
+   if(symbol == "us30cash" || symbol == "us30"){return 10.0;}
+   else if(symbol == "xauusd" || symbol == "gold"){return 1.0;}
+   else if(symbol == "us100cash" || symbol == "nas100"){return 10.0;}
+   return 0.0;
 }
