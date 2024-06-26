@@ -5,9 +5,24 @@
 indicator("grid", overlay=true, max_lines_count=500, max_boxes_count=500)
 
 lineColour = input.color(title="", defval=color.new(#000000, 80), inline="major")
-boxColour = input.color(title="", defval=color.new(#000000, 80), inline="major")
+boxColour = input.color(title="", defval=color.new(#8c564b, 80), inline="major")
 startPoint = input.float(title="", defval=2200, inline="major")
 configSize = input.float(title='', defval=1, options=[0.0625, 0.125, 0.25, 0.5, 1, 2, 4, 8, 16], inline='major')
 enableZones = true
 
 
+float grid_steps = switch syminfo.ticker
+    "XAUUSD" => float(1 * configSize)
+    "GOLD" => float(1 * configSize)
+    "NAS100" => float(10 * configSize)
+    "NAS100USD" => float(10 * configSize)
+    "US30USD" => float(10 * configSize)
+    "US30" => float(10 * configSize)
+
+
+float startPointConfig = switch syminfo.ticker
+    "XAUUSD" => float(2200)
+    "NAS100USD" => float(18500)
+    "NAS100" => float(18500)
+    "US30USD" => float(39000)
+    "US30" => float(39000)
