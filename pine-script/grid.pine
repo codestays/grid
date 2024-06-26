@@ -26,3 +26,21 @@ float startPointConfig = switch syminfo.ticker
     "NAS100" => float(18500)
     "US30USD" => float(39000)
     "US30" => float(39000)
+
+
+create_grid(initial_point) =>
+    float increment = (grid_steps * 2)
+    float position = (initial_point - initial_point % (grid_steps * 100)) + increment
+    float zone_position = position + grid_steps
+    int max = 500 / 5
+    float boxHeight = increment / 8
+    
+    for i=1 to max
+        line.new(bar_index, (position), bar_index-1, (position), extend=extend.both, color=lineColour, width=2)
+        if enableZones
+            box.new(bar_index, position + boxHeight, bar_index-1, position - boxHeight, border_color=boxColour, border_width=1, extend=extend.both, bgcolor=boxColour)
+        position += increment 
+    
+
+if barstate.islast
+    create_grid(startPointConfig)
